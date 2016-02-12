@@ -174,6 +174,7 @@ int main(int argc, char* argv[]) {
 			HttpServerRequestHandler http(&httpServer, &webRtcServer);
 			std::cout << "HTTP Listening at " << http_addr.ToString() << std::endl;
 			
+			#if 0 // using google stun server. stop local stun server.
 			// STUN server
 			rtc::SocketAddress server_addr;
 			server_addr.FromString(stunurl);
@@ -188,6 +189,7 @@ int main(int argc, char* argv[]) {
 			{
 				std::cout << "STUN bad at " << server_addr.ToString() << std::endl;
 			}
+			#endif // using google stun server. stop local stun server.
 
 			// mainloop
 			while(thread->ProcessMessages(10));
