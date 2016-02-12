@@ -18,15 +18,20 @@ CFLAGS += -DWEBRTC_POSIX -fno-rtti
 CFLAGS += -I $(WEBRTCROOT)/src -I $(WEBRTCROOT)/src/chromium/src/third_party/jsoncpp/source/include
 LDFLAGS += -lX11 -ldl -lrt
 
-TARGET = webrtc-server_$(GYP_GENERATOR_OUTPUT)_$(WEBRTCBUILD)
-all: $(TARGET)
+TARGETC = webrtc.v4l.client_$(GYP_GENERATOR_OUTPUT)_$(WEBRTCBUILD)
+TARGETS = webrtc.signal.server_$(GYP_GENERATOR_OUTPUT)_$(WEBRTCBUILD)
+
+all: $(TARGETC) $(TARGETS)
 
 WEBRTC_LIB = $(shell find $(WEBRTCLIBPATH) -name '*.a')
 libWebRTC_$(GYP_GENERATOR_OUTPUT)_$(WEBRTCBUILD).a: $(WEBRTC_LIB)
 	$(AR) -rcT $@ $^
 
-$(TARGET): main.cpp PeerConnectionManager.cpp libWebRTC_$(GYP_GENERATOR_OUTPUT)_$(WEBRTCBUILD).a
+$(TARGETC): main.cpp PeerConnectionManager.cpp libWebRTC_$(GYP_GENERATOR_OUTPUT)_$(WEBRTCBUILD).a
+	$(CC) -o $@ $(CFLAGS) $^ $(LDFLAGS)	
+
+$(TARGETS): siganl.server.main.cpp PeerConnectionManager.cpp libWebRTC_$(GYP_GENERATOR_OUTPUT)_$(WEBRTCBUILD).a
 	$(CC) -o $@ $(CFLAGS) $^ $(LDFLAGS)	
 
 clean:
-	rm -f *.o libWebRTC_$(GYP_GENERATOR_OUTPUT)_$(WEBRTCBUILD).a $(TARGET)
+	rm -f *.o libWebRTC_$(GYP_GENERATOR_OUTPUT)_$(WEBRTCBUILD).a $(TARGETC) $(TARGETS)
