@@ -183,7 +183,11 @@ int main(int argc, char* argv[]) {
 			{
 				stunserver.reset(new cricket::StunServer(server_socket));
 				std::cout << "STUN Listening at " << server_addr.ToString() << std::endl;
-			}		
+			}
+			else
+			{
+				std::cout << "STUN bad at " << server_addr.ToString() << std::endl;
+			}
 
 			// mainloop
 			while(thread->ProcessMessages(10));
