@@ -122,7 +122,7 @@ class HttpServerRequestHandler : public sigslot::has_slots<>
 ** -------------------------------------------------------------------------*/
 int main(int argc, char* argv[]) {
 	const char* port     = "0.0.0.0:8000";
-	const char* stunurl  = "127.0.0.1:3478";
+	const char* stunurl  = "stun.l.google.com:19302";
 	int logLevel = rtc::LERROR; 
 	
 	int c = 0;     
