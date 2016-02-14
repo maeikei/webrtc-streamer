@@ -80,6 +80,10 @@ class PeerConnectionManager {
 			virtual void OnRenegotiationNeeded() {}
 			virtual void OnIceChange() {}
 			virtual void OnIceCandidate(const webrtc::IceCandidateInterface* candidate);
+			
+			virtual void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState) {}
+			virtual void OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState) {}
+			virtual void OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState) {}
 				
 		protected:
 			PeerConnectionObserver() : m_pc(NULL) {};
