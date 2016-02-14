@@ -12,8 +12,8 @@
 
 #include <string>
 
-#include "talk/app/webrtc/mediastreaminterface.h"
-#include "talk/app/webrtc/peerconnectioninterface.h"
+#include "webrtc/api/mediastreaminterface.h"
+#include "webrtc/api/peerconnectioninterface.h"
 #include "webrtc/base/scoped_ptr.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/json.h"
