@@ -164,6 +164,11 @@
     }
     window.onload = init;
     window.onbeforeunload = disconnect;
+
+    function chat_go() {
+    	console.log('chat_go');
+    }    
+
     
 </script>
 </head>
@@ -182,5 +187,12 @@
     <button id="connect"    onclick="connect();">Connect</button>
     <button id="disconnect" onclick="disconnect();" disabled="true">Disconnect</button>
     <br>
+    <div id="chat_box">
+        <div id="recieve_text">----</div>
+        <div id="send_text">
+            <input id="input_send" type="text" name="namae" size="40" maxlength="20">
+        </div>
+        <button id="chat_go"    onclick="chat_go();">GO</button>
+    </div>
 </body>
 </html>
