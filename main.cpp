@@ -112,7 +112,7 @@ class HttpServerRequestHandler : public sigslot::has_slots<>
 				std::string peerid;	
 				t-> request.hasHeader("peerid", &peerid);				
 				
-				std::string answer(Json::StyledWriter().write(m_webRtcServer->getIceCandidateListDC(peerid)));					
+				std::string answer(Json::StyledWriter().write(m_webRtcServer->getIceCandidateList(peerid)));					
 				rtc::MemoryStream* mem = new rtc::MemoryStream(answer.c_str(), answer.size());			
 				t->response.set_success("text/plain", mem);			
 			}
