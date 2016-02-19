@@ -370,7 +370,7 @@ const std::string PeerConnectionManager::getOfferDC(std::string &peerid, const s
 void PeerConnectionManager::AddDC(webrtc::PeerConnectionInterface* peer_connection, const std::string & url) 
 {
 	webrtc::DataChannelInit init;
-	peer_connection->CreateDataChannel("data", init);
+	peer_connection->CreateDataChannel("data", &init);
 }
 
 
