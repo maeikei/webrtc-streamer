@@ -165,13 +165,18 @@
     window.onload = init;
     window.onbeforeunload = disconnect;
 
+    var pcDC;
+    var dataChannel;
     function chat_go() {
     	console.log('chat_go');
     	var msg = document.getElementById("input_send").value;
     	console.log(msg);
+    	if (pcDC) {
+    		console.log('send!!!');
+    	} else {
+    		createDataChannel();
+    	}
     }
-    var pcDC;
-    var dataChannel;
     function createDataChannel() {
         try {
             trace("createPeerConnection  config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions));
@@ -186,7 +191,7 @@
         catch (e) {
             trace("Failed to create PeerConnection DataChannel with " + connectionId + ", exception: " + e.message);
         }
-        return pc;
+        return pcDC;
     }
 
     
