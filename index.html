@@ -167,6 +167,53 @@
 
     var pcDC;
     var dataChannel;
+    var pcOptionsDC = { optional: [{DtlsSrtpKeyAgreement: true},{'RtpDataChannels': true }] };
+    var dataConstraints = {'mandatory': {OfferToReceiveAudio:false,'OfferToReceiveVideo': false }};
+
+    function onReceiveCandidateDC(request) {
+        trace("candidate: " + request.responseText);
+        var dataJson = JSON.parse(request.responseText);
+        for (var i=0; i<dataJson.length; i++)
+        {
+            var candidate = new RTCIceCandidate(dataJson[i]);
+            
+            trace("Adding ICE candiate :" + JSON.stringify(candidate) );
+            pc.addIceCandidate(candidate,
+                function() { trace ("addIceCandidate OK"); },
+                function(error) { trace ("addIceCandidate error:" + JSON.stringify(error)); }
+            );
+        }
+    }
+
+    function onReceiveOfferDC(request) {
+        trace("peerid: " + request.getResponseHeader("peerid") + " offer: " + request.responseText);
+        pc.peerid = request.getResponseHeader("peerid");
+        var dataJson = JSON.parse(request.responseText);
+        pc.setRemoteDescription(new RTCSessionDescription(dataJson), 
+            function () { 
+                trace('setRemoteDescription: success ' + pc.peerid); 
+                pc.createAnswer(function(sessionDescription) {
+                    trace("Create answer:" + JSON.stringify(sessionDescription));
+                    pc.setLocalDescription(sessionDescription);
+                    send("/answerDC",pc.peerid,JSON.stringify(sessionDescription));
+                }, function(error) { 
+                    trace("Create answer error:" + JSON.stringify(error));
+                }, dataConstraints); 			
+            } , 
+            function(error) { 
+		trace('setRemoteDescription: error:'+JSON.stringify(error)); 
+		alert('setRemoteDescription: error:'+JSON.stringify(error)); 
+            }
+        );    
+        
+        request.open("GET", "/getIceCandidateDC" , false);
+        request.setRequestHeader("peerid", pc.peerid);
+        request.send();
+        if (request.status === 200) {
+            onReceiveCandidateDC(request);
+        }		
+    }
+
     
     function connectDC() {
         try {            
@@ -203,8 +250,6 @@
     	var msg = document.getElementById("input_send").value;
     	console.log(msg);
     }
-    var pcOptionsDC = { optional: [{DtlsSrtpKeyAgreement: true},{'RtpDataChannels': true }] };
-    var dataConstraints = {'mandatory': {OfferToReceiveAudio:false,'OfferToReceiveVideo': false }};
     function createDataChannel() {
         try {
             console.log("createPeerConnection  config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptionsDC));
