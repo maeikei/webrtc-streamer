@@ -369,15 +369,9 @@ const std::string PeerConnectionManager::getOfferDC(std::string &peerid, const s
 
 void PeerConnectionManager::AddDC(webrtc::PeerConnectionInterface* peer_connection, const std::string & url) 
 {
-	cricket::VideoCapturer* capturer = OpenVideoCaptureDevice(url);
-	if (!capturer)
+	webrtc::DataChannelInit init;
+	rtc::scoped_refptr<webrtc::DataChannelInterface> source = peer_connection_factory_->CreateDataChannel("data", init);
 	{
-		LOG(LS_ERROR) << "Cannot create capturer " << url;
-	}
-	else
-	{
-		VideoCapturerListener listener(capturer);
-		rtc::scoped_refptr<webrtc::VideoSourceInterface> source = peer_connection_factory_->CreateVideoSource(capturer, NULL);
 		rtc::scoped_refptr<webrtc::VideoTrackInterface> video_track(peer_connection_factory_->CreateVideoTrack(kVideoLabel, source));
 		rtc::scoped_refptr<webrtc::MediaStreamInterface> stream = peer_connection_factory_->CreateLocalMediaStream(kStreamLabel);
 		if (!stream.get())
