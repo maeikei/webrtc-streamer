@@ -23,7 +23,7 @@
             trace("Created RTCPeerConnnection with config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions) );
         } 
         catch (e) {
-            trace("Failed to create PeerConnection with " + connectionId + ", exception: " + e.message);
+            trace("Failed to create PeerConnection with " + ", exception: " + e.message);
         }
         return pc;
     }
@@ -189,7 +189,7 @@
             trace("Created RTCPeerConnnection DataChannel with config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions) );
         } 
         catch (e) {
-            trace("Failed to create PeerConnection DataChannel with " + connectionId + ", exception: " + e.message);
+            trace("Failed to create PeerConnection DataChannel with " + ", exception: " + e.message);
         }
         return pcDC;
     }
