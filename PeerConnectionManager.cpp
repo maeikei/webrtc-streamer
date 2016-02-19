@@ -371,26 +371,6 @@ void PeerConnectionManager::AddDC(webrtc::PeerConnectionInterface* peer_connecti
 {
 	webrtc::DataChannelInit init;
 	rtc::scoped_refptr<webrtc::DataChannelInterface> source = peer_connection_factory_->CreateDataChannel("data", init);
-	{
-		rtc::scoped_refptr<webrtc::VideoTrackInterface> video_track(peer_connection_factory_->CreateVideoTrack(kVideoLabel, source));
-		rtc::scoped_refptr<webrtc::MediaStreamInterface> stream = peer_connection_factory_->CreateLocalMediaStream(kStreamLabel);
-		if (!stream.get())
-		{
-			LOG(LS_ERROR) << "Cannot create stream";
-		}
-		else
-		{
-			stream->AddTrack(video_track);
-			rtc::scoped_refptr<webrtc::AudioSourceInterface> audioSource = peer_connection_factory_->CreateAudioSource(NULL);
-			rtc::scoped_refptr<webrtc::AudioTrackInterface> audio_track(
-				peer_connection_factory_->CreateAudioTrack(kAudioLabel,audioSource));
-			stream->AddTrack(audio_track);
-			if (!peer_connection->AddStream(stream)) 
-			{
-				LOG(LS_ERROR) << "Adding stream to PeerConnection failed";
-			}
-		}
-	}
 }
 
 
