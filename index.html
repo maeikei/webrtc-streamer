@@ -170,6 +170,24 @@
     	var msg = document.getElementById("input_send").value;
     	console.log(msg);
     }
+    var pcDC;
+    var dataChannel;
+    function createDataChannel() {
+        try {
+            trace("createPeerConnection  config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions));
+            pcDC = new RTCPeerConnection(pcConfig, pcOptions);
+            dataChannel = peer.createDataChannel('RTCDataChannel');
+            pcDC.createOffer(function(sdp) {
+            	// Offer send callback
+            	console.log(sdp);
+            });
+            trace("Created RTCPeerConnnection DataChannel with config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions) );
+        } 
+        catch (e) {
+            trace("Failed to create PeerConnection DataChannel with " + connectionId + ", exception: " + e.message);
+        }
+        return pc;
+    }
 
     
 </script>
