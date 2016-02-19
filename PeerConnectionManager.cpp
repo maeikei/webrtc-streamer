@@ -238,7 +238,10 @@ void PeerConnectionManager::AddStreams(webrtc::PeerConnectionInterface* peer_con
 		else
 		{
 			stream->AddTrack(video_track);
-		
+			rtc::scoped_refptr<webrtc::AudioSourceInterface> audioSource = peer_connection_factory_->CreateAudioSource(NULL);
+			rtc::scoped_refptr<webrtc::AudioTrackInterface> audio_track(
+				peer_connection_factory_->CreateAudioTrack(kAudioLabel,audioSource));
+			stream->AddTrack(audio_track);
 			if (!peer_connection->AddStream(stream)) 
 			{
 				LOG(LS_ERROR) << "Adding stream to PeerConnection failed";
