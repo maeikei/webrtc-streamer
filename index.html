@@ -222,7 +222,6 @@
             request = new XMLHttpRequest();
             
             request.open("GET", "/offerDC", false);
-            request.setRequestHeader("url", encodeURIComponent(url) );
             request.send();
             if (request.status === 200) {
                 onReceiveOfferDC(request);
