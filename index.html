@@ -181,7 +181,7 @@
         try {
             console.log("createPeerConnection  config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions));
             pcDC = new RTCPeerConnection(pcConfig, pcOptions);
-            dataChannel = peer.createDataChannel('RTCDataChannel');
+            dataChannel = pcDC.createDataChannel('RTCDataChannel');
             pcDC.createOffer(function(sdp) {
             	// Offer send callback
             	console.log(sdp);
