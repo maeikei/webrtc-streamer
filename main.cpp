@@ -77,6 +77,19 @@ class HttpServerRequestHandler : public sigslot::has_slots<>
 				t->response.addHeader("peerid",peerid);	
 				t->response.set_success("text/plain", mem);			
 			}
+			else if (path == "/offerDC")
+			{
+				std::string url;
+				t-> request.hasHeader("url", &url);
+				url = rtc::s_url_decode(url);
+				std::string peerid;					
+				std::string answer(m_webRtcServer->getOfferDC(peerid,url));
+				std::cout << peerid << ":" << answer << std::endl;
+				
+				rtc::MemoryStream* mem = new rtc::MemoryStream(answer.c_str(), answer.size());			
+				t->response.addHeader("peerid",peerid);	
+				t->response.set_success("text/plain", mem);			
+			}
 			else if (path == "/answer")
 			{
 				std::string peerid;	
