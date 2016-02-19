@@ -179,17 +179,17 @@
     }
     function createDataChannel() {
         try {
-            trace("createPeerConnection  config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions));
+            console.log("createPeerConnection  config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions));
             pcDC = new RTCPeerConnection(pcConfig, pcOptions);
             dataChannel = peer.createDataChannel('RTCDataChannel');
             pcDC.createOffer(function(sdp) {
             	// Offer send callback
             	console.log(sdp);
             });
-            trace("Created RTCPeerConnnection DataChannel with config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions) );
+            console.log("Created RTCPeerConnnection DataChannel with config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions) );
         } 
         catch (e) {
-            trace("Failed to create PeerConnection DataChannel with " + ", exception: " + e.message);
+            console.log("Failed to create PeerConnection DataChannel with " + ", exception: " + e.message);
         }
         return pcDC;
     }
