@@ -112,7 +112,7 @@ class PeerConnectionManager {
 		void AddStreams(webrtc::PeerConnectionInterface* peer_connection, const std::string & url);
 		cricket::VideoCapturer* OpenVideoCaptureDevice(const std::string & url);
 		std::pair<rtc::scoped_refptr<webrtc::PeerConnectionInterface>, PeerConnectionManager::PeerConnectionObserver* > CreatePeerConnectionDC(const std::string & url);
-		void AddData(webrtc::PeerConnectionInterface* peer_connection, const std::string & url);
+		void AddDC(webrtc::PeerConnectionInterface* peer_connection, const std::string & url);
 
 	protected: 
 		rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory_;
