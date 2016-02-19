@@ -107,6 +107,15 @@ class HttpServerRequestHandler : public sigslot::has_slots<>
 				rtc::MemoryStream* mem = new rtc::MemoryStream(answer.c_str(), answer.size());			
 				t->response.set_success("text/plain", mem);			
 			}
+			else if (path == "/getIceCandidateDC")
+			{
+				std::string peerid;	
+				t-> request.hasHeader("peerid", &peerid);				
+				
+				std::string answer(Json::StyledWriter().write(m_webRtcServer->getIceCandidateListDC(peerid)));					
+				rtc::MemoryStream* mem = new rtc::MemoryStream(answer.c_str(), answer.size());			
+				t->response.set_success("text/plain", mem);			
+			}
 			else if (path == "/addIceCandidate")
 			{
 				std::string peerid;	
