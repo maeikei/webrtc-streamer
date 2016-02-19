@@ -178,7 +178,7 @@
             var candidate = new RTCIceCandidate(dataJson[i]);
             
             trace("Adding ICE candiate :" + JSON.stringify(candidate) );
-            pc.addIceCandidate(candidate,
+            pcDC.addIceCandidate(candidate,
                 function() { trace ("addIceCandidate OK"); },
                 function(error) { trace ("addIceCandidate error:" + JSON.stringify(error)); }
             );
@@ -187,15 +187,15 @@
 
     function onReceiveOfferDC(request) {
         trace("peerid: " + request.getResponseHeader("peerid") + " offer: " + request.responseText);
-        pc.peerid = request.getResponseHeader("peerid");
+        pcDC.peerid = request.getResponseHeader("peerid");
         var dataJson = JSON.parse(request.responseText);
-        pc.setRemoteDescription(new RTCSessionDescription(dataJson), 
+        pcDC.setRemoteDescription(new RTCSessionDescription(dataJson), 
             function () { 
-                trace('setRemoteDescription: success ' + pc.peerid); 
-                pc.createAnswer(function(sessionDescription) {
+                trace('setRemoteDescription: success ' + pcDC.peerid); 
+                pcDC.createAnswer(function(sessionDescription) {
                     trace("Create answer:" + JSON.stringify(sessionDescription));
-                    pc.setLocalDescription(sessionDescription);
-                    send("/answerDC",pc.peerid,JSON.stringify(sessionDescription));
+                    pcDC.setLocalDescription(sessionDescription);
+                    send("/answerDC",pcDC.peerid,JSON.stringify(sessionDescription));
                 }, function(error) { 
                     trace("Create answer error:" + JSON.stringify(error));
                 }, dataConstraints); 			
@@ -207,7 +207,7 @@
         );    
         
         request.open("GET", "/getIceCandidateDC" , false);
-        request.setRequestHeader("peerid", pc.peerid);
+        request.setRequestHeader("peerid", pcDC.peerid);
         request.send();
         if (request.status === 200) {
             onReceiveCandidateDC(request);
