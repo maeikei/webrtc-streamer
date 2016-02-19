@@ -104,6 +104,34 @@ std::pair<rtc::scoped_refptr<webrtc::PeerConnectionInterface>, PeerConnectionMan
 	return std::pair<rtc::scoped_refptr<webrtc::PeerConnectionInterface>, PeerConnectionObserver* >(peer_connection, obs);
 }
 
+std::pair<rtc::scoped_refptr<webrtc::PeerConnectionInterface>, PeerConnectionManager::PeerConnectionObserver* > PeerConnectionManager::CreatePeerConnectionDC(const std::string & url) 
+{
+	webrtc::PeerConnectionInterface::RTCConfiguration config;
+	webrtc::PeerConnectionInterface::IceServer server;
+	server.uri = "stun:" + stunurl_;
+	server.username = "";
+	server.password = "";
+	config.servers.push_back(server);
+
+	PeerConnectionObserver* obs = PeerConnectionObserver::Create();
+	rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection = peer_connection_factory_->CreatePeerConnection(config,
+							    NULL,
+							    NULL,
+							    NULL,
+							    obs);
+	if (!peer_connection) 
+	{
+		LOG(LERROR) << __FUNCTION__ << "CreatePeerConnection failed";
+	}
+	else 
+	{
+		obs->setPeerConnection(peer_connection);
+		this->AddDC(peer_connection, url);
+	}
+	return std::pair<rtc::scoped_refptr<webrtc::PeerConnectionInterface>, PeerConnectionObserver* >(peer_connection, obs);
+}
+
+
 void PeerConnectionManager::DeletePeerConnection() 
 {
 }
@@ -299,7 +327,7 @@ const std::string PeerConnectionManager::getOfferDC(std::string &peerid, const s
 	std::string offer;
 	LOG(INFO) << __FUNCTION__;
 	
-	std::pair<rtc::scoped_refptr<webrtc::PeerConnectionInterface>, PeerConnectionObserver* > peer_connection = this->CreatePeerConnection(url);
+	std::pair<rtc::scoped_refptr<webrtc::PeerConnectionInterface>, PeerConnectionObserver* > peer_connection = this->CreatePeerConnectionDC(url);
 	if (!peer_connection.first) 
 	{
 		LOG(LERROR) << "Failed to initialize PeerConnection";
@@ -338,6 +366,39 @@ const std::string PeerConnectionManager::getOfferDC(std::string &peerid, const s
 	}
 	return offer;
 }
+
+void PeerConnectionManager::AddDC(webrtc::PeerConnectionInterface* peer_connection, const std::string & url) 
+{
+	cricket::VideoCapturer* capturer = OpenVideoCaptureDevice(url);
+	if (!capturer)
+	{
+		LOG(LS_ERROR) << "Cannot create capturer " << url;
+	}
+	else
+	{
+		VideoCapturerListener listener(capturer);
+		rtc::scoped_refptr<webrtc::VideoSourceInterface> source = peer_connection_factory_->CreateVideoSource(capturer, NULL);
+		rtc::scoped_refptr<webrtc::VideoTrackInterface> video_track(peer_connection_factory_->CreateVideoTrack(kVideoLabel, source));
+		rtc::scoped_refptr<webrtc::MediaStreamInterface> stream = peer_connection_factory_->CreateLocalMediaStream(kStreamLabel);
+		if (!stream.get())
+		{
+			LOG(LS_ERROR) << "Cannot create stream";
+		}
+		else
+		{
+			stream->AddTrack(video_track);
+			rtc::scoped_refptr<webrtc::AudioSourceInterface> audioSource = peer_connection_factory_->CreateAudioSource(NULL);
+			rtc::scoped_refptr<webrtc::AudioTrackInterface> audio_track(
+				peer_connection_factory_->CreateAudioTrack(kAudioLabel,audioSource));
+			stream->AddTrack(audio_track);
+			if (!peer_connection->AddStream(stream)) 
+			{
+				LOG(LS_ERROR) << "Adding stream to PeerConnection failed";
+			}
+		}
+	}
+}
+
 
 
 const Json::Value PeerConnectionManager::getIceCandidateList(const std::string &peerid)
