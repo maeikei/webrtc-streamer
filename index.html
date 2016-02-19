@@ -177,10 +177,11 @@
     		createDataChannel();
     	}
     }
+    var pcOptionsDC = { optional: [{DtlsSrtpKeyAgreement: true},{'RtpDataChannels': true }] };
     function createDataChannel() {
         try {
-            console.log("createPeerConnection  config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptions));
-            pcDC = new RTCPeerConnection(pcConfig, pcOptions);
+            console.log("createPeerConnection  config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptionsDC));
+            pcDC = new RTCPeerConnection(pcConfig, pcOptionsDC);
             dataChannel = pcDC.createDataChannel('RTCDataChannel');
             pcDC.createOffer(function(sdp) {
             	// Offer send callback
