@@ -167,15 +167,41 @@
 
     var pcDC;
     var dataChannel;
+    
+    function connectDC() {
+        try {            
+            pcDC = createDataChannel();
+
+            request = new XMLHttpRequest();
+            
+            request.open("GET", "/offerDC", false);
+            request.setRequestHeader("url", encodeURIComponent(url) );
+            request.send();
+            if (request.status === 200) {
+                onReceiveOfferDC(request);
+            }	  							
+            
+        } catch (e) {
+            trace("connect error: " + e.description);
+        }	    
+    }
+    
+    function disconnectDC() {
+        if (request) {
+            request.abort();
+            request = null;
+        }  
+        if (pcDC)
+        {
+            pcDC.close();
+        }
+    }    
+    
+    
     function chat_go() {
     	console.log('chat_go');
     	var msg = document.getElementById("input_send").value;
     	console.log(msg);
-    	if (pcDC) {
-    		console.log('send!!!');
-    	} else {
-    		createDataChannel();
-    	}
     }
     var pcOptionsDC = { optional: [{DtlsSrtpKeyAgreement: true},{'RtpDataChannels': true }] };
     var dataConstraints = {'mandatory': {OfferToReceiveAudio:false,'OfferToReceiveVideo': false }};
@@ -216,6 +242,8 @@
     <button id="disconnect" onclick="disconnect();" disabled="true">Disconnect</button>
     <br>
     <div id="chat_box">
+        <button id="connectDC"    onclick="connectDC();">connectDC</button>
+        <button id="disconnectDC"    onclick="disconnectDC();">disconnectDC</button>
         <div id="recieve_text">----</div>
         <div id="send_text">
             <input id="input_send" type="text" name="namae" size="40" maxlength="20">
