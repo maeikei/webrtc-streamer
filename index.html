@@ -6,7 +6,7 @@
     var pc;    
     var pcConfig = {"iceServers": []};
     var pcOptions = { optional: [{DtlsSrtpKeyAgreement: true} ] };
-    var mediaConstraints = {'mandatory': {'OfferToReceiveVideo': true }};
+    var mediaConstraints = {'mandatory': {OfferToReceiveAudio:true,'OfferToReceiveVideo': true }};
     
     RTCPeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
     RTCSessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
@@ -178,16 +178,17 @@
     	}
     }
     var pcOptionsDC = { optional: [{DtlsSrtpKeyAgreement: true},{'RtpDataChannels': true }] };
+    var dataConstraints = {'mandatory': {OfferToReceiveAudio:false,'OfferToReceiveVideo': false }};
     function createDataChannel() {
         try {
             console.log("createPeerConnection  config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptionsDC));
             pcDC = new RTCPeerConnection(pcConfig, pcOptionsDC);
             dataChannel = pcDC.createDataChannel('RTCDataChannel');
             pcDC.createAnswer(function(sdp) {
-            	// Offer send callback
+            	// Answer 
             	console.log(sdp);
             	pcDC.setLocalDescription(sdp);
-            });
+            },null,dataConstraints);
             console.log("Created RTCPeerConnnection DataChannel with config: " + JSON.stringify(pcConfig) + "option:"+  JSON.stringify(pcOptionsDC) );
         } 
         catch (e) {
