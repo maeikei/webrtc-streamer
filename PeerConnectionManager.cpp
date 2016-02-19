@@ -294,6 +294,51 @@ const std::string PeerConnectionManager::getOffer(std::string &peerid, const std
 	}
 	return offer;
 }
+const std::string PeerConnectionManager::getOfferDC(std::string &peerid, const std::string & url) 
+{
+	std::string offer;
+	LOG(INFO) << __FUNCTION__;
+	
+	std::pair<rtc::scoped_refptr<webrtc::PeerConnectionInterface>, PeerConnectionObserver* > peer_connection = this->CreatePeerConnection(url);
+	if (!peer_connection.first) 
+	{
+		LOG(LERROR) << "Failed to initialize PeerConnection";
+	}
+	else
+	{		
+		std::ostringstream os;
+		os << rand();
+		peerid = os.str();		
+		
+		// register peerid
+		peer_connection_map_.insert(std::pair<std::string, rtc::scoped_refptr<webrtc::PeerConnectionInterface> >(peerid, peer_connection.first));			
+		peer_connectionobs_map_.insert(std::pair<std::string, PeerConnectionObserver* >(peerid, peer_connection.second));	
+		
+		peer_connection.first->CreateOffer(CreateSessionDescriptionObserver::Create(peer_connection.first), NULL);
+		
+		// waiting for offer
+		int count=10;
+		while ( (peer_connection.first->local_description() == NULL) && (--count > 0) )
+		{
+			rtc::Thread::Current()->ProcessMessages(10);
+		}
+				
+		const webrtc::SessionDescriptionInterface* desc = peer_connection.first->local_description();
+		if (desc)
+		{
+			Json::Value jmessage;
+			jmessage[kSessionDescriptionTypeName] = desc->type();
+			std::string sdp;
+			desc->ToString(&sdp);
+			jmessage[kSessionDescriptionSdpName] = sdp;
+			
+			Json::StyledWriter writer;
+			offer = writer.write(jmessage);
+		}
+	}
+	return offer;
+}
+
 
 const Json::Value PeerConnectionManager::getIceCandidateList(const std::string &peerid)
 {
